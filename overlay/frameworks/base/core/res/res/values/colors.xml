@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BestROM monochrome — black + greys only -->
+<resources>
+    <color name="background_device_default_light">#FF000000</color>
+    <color name="background_device_default_dark">#FF000000</color>
+    <color name="config_defaultNotificationColor">#FF9CA3AF</color>
+</resources>
