@@ -1,0 +1,7 @@
+# BestROM full phone product
+# SPDX-License-Identifier: Apache-2.0
+
+$(call inherit-product, vendor/bestrom/config/common.mk)
+
+# Platform feature set (telephony / packages / framework extras)
+$(call inherit-product, vendor/voltage/config/common_full_phone.mk)

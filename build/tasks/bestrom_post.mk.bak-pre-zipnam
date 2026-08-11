@@ -1,0 +1,19 @@
+# BestROM packaging alias — runs after standard bacon when product is bestrom_*
+ifneq ($(filter bestrom_%,$(TARGET_PRODUCT)),)
+
+BESTROM_TARGET_PACKAGE := $(PRODUCT_OUT)/$(BESTROM_ZIP_STEM).zip
+
+.PHONY: bestrom_zip
+bestrom_zip: bacon
+	$(hide) if [ -f $(PRODUCT_OUT)/voltage-$(VOLTAGE_VERSION).zip ]; then \
+	  ln -sf voltage-$(VOLTAGE_VERSION).zip $(BESTROM_TARGET_PACKAGE); \
+	  ln -sf voltage-$(VOLTAGE_VERSION).zip.sha256sum $(BESTROM_TARGET_PACKAGE).sha256sum 2>/dev/null || true; \
+	  mkdir -p $(HOME)/voltage_artifacts/BestROM; \
+	  cp -f $(PRODUCT_OUT)/voltage-$(VOLTAGE_VERSION).zip $(HOME)/voltage_artifacts/BestROM/$(BESTROM_ZIP_STEM).zip; \
+	  (cd $(HOME)/voltage_artifacts/BestROM && sha256sum $(BESTROM_ZIP_STEM).zip > $(BESTROM_ZIP_STEM).zip.sha256sum); \
+	  echo "BestROM package: $(BESTROM_TARGET_PACKAGE)"; \
+	  echo "Archived: $(HOME)/voltage_artifacts/BestROM/$(BESTROM_ZIP_STEM).zip"; \
+	fi
+
+# Default m goal for BestROM: still bacon; tag script also renames
+endif

@@ -1,0 +1,60 @@
+# BestROM packaging — create BestROM-named zip after bacon when TARGET_PRODUCT is bestrom_*
+# Auto-included via build/core/Makefile: vendor/*/build/tasks/*.mk
+# SPDX-License-Identifier: Apache-2.0
+#
+# Include order: vendor/bestrom sorts before vendor/voltage, so we cannot append a second
+# bacon recipe here (it would run *before* voltage bacon.mk creates the voltage-*.zip).
+# Instead we expose $(bestrom-post-bacon) for bacon.mk to invoke at the end of its recipe,
+# plus an explicit `bestrom_zip` goal (bacon + publish).
+
+ifneq ($(filter bestrom_%,$(TARGET_PRODUCT)),)
+
+# Fallbacks if product common.mk did not set stems (should be set for bestrom_*)
+BESTROM_ANDROID ?= 16
+BESTROMVERSION ?= 1.0
+BESTROM_BUILD_TYPE ?= UNOFFICIAL
+BESTROM_DEVICE_SHORT ?= $(TARGET_DEVICE)
+
+# Prefer Voltage build date when available so BestROM stem matches voltage-*.zip stamp
+BESTROM_BUILD_DATE ?= $(if $(VOLTAGE_BUILD_DATE),$(VOLTAGE_BUILD_DATE),$(shell date -u +%Y%m%d-%H%M))
+
+BESTROM_ZIP_STEM ?= BestROM-A$(BESTROM_ANDROID)-$(BESTROM_DEVICE_SHORT)-$(BESTROM_BUILD_DATE)-$(BESTROM_BUILD_TYPE)
+BESTROM_TARGET_PACKAGE := $(PRODUCT_OUT)/$(BESTROM_ZIP_STEM).zip
+BESTROM_ARTIFACT_DIR := $(HOME)/voltage_artifacts/BestROM
+
+# Shell body used at end of bacon (and by bestrom_zip). Make expands vars; shell sees concrete paths.
+define bestrom-post-bacon
+	$(hide) VZIP="$(PRODUCT_OUT)/voltage-$(VOLTAGE_VERSION).zip"; \
+	STEM="$(BESTROM_ZIP_STEM)"; \
+	if [ ! -f "$$VZIP" ]; then \
+	  echo "bestrom_post: missing $$VZIP (bacon voltage package)"; \
+	  exit 0; \
+	fi; \
+	ln -sf "voltage-$(VOLTAGE_VERSION).zip" "$(PRODUCT_OUT)/$$STEM.zip"; \
+	if [ -f "$$VZIP.sha256sum" ]; then \
+	  ln -sf "voltage-$(VOLTAGE_VERSION).zip.sha256sum" "$(PRODUCT_OUT)/$$STEM.zip.sha256sum"; \
+	else \
+	  (cd "$(PRODUCT_OUT)" && sha256sum "$$STEM.zip" > "$$STEM.zip.sha256sum") || true; \
+	fi; \
+	mkdir -p "$(BESTROM_ARTIFACT_DIR)"; \
+	if ! ln -f "$$VZIP" "$(BESTROM_ARTIFACT_DIR)/$$STEM.zip" 2>/dev/null; then \
+	  cp -f "$$VZIP" "$(BESTROM_ARTIFACT_DIR)/$$STEM.zip"; \
+	fi; \
+	(cd "$(BESTROM_ARTIFACT_DIR)" && sha256sum "$$STEM.zip" > "$$STEM.zip.sha256sum"); \
+	echo "BestROM package (primary): $(PRODUCT_OUT)/$$STEM.zip"; \
+	echo "BestROM archive:           $(BESTROM_ARTIFACT_DIR)/$$STEM.zip"; \
+	echo "Voltage package (secondary): $$VZIP"
+endef
+
+# Explicit goal: mka bestrom_zip  (runs bacon then publish)
+.PHONY: bestrom_zip
+bestrom_zip: bacon
+	$(bestrom-post-bacon)
+
+else
+
+# voltage_* (and any non-bestrom product): no-op hook so bacon.mk can always call it
+define bestrom-post-bacon
+endef
+
+endif

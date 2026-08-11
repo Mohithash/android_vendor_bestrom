@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="voltage_version">BestROM version</string>
+    <string name="voltage_version_default" translatable="false">1.0</string>
+    <string name="voltage_maintainer_title">Build status</string>
+    <string name="voltage_maintainer">BestROM</string>
+</resources>
