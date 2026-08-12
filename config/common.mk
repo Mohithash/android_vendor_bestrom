@@ -5,11 +5,10 @@ BESTROM_ANDROID := 16
 BESTROMVERSION ?= 1.0
 BESTROM_BUILD_TYPE ?= OFFICIAL
 
-BESTROM_DATE_YEAR := $(shell date -u +%Y)
-BESTROM_DATE_MONTH := $(shell date -u +%m)
-BESTROM_DATE_DAY := $(shell date -u +%d)
-BESTROM_DATE_HOUR := $(shell date -u +%H)
-BESTROM_DATE_MINUTE := $(shell date -u +%M)
+# Pinned BESTROM_* dates via voltage build_stamp.mk
+ifndef BESTROM_DATE_YEAR
+include vendor/voltage/config/build_stamp.mk
+endif
 BESTROM_BUILD_DATE := $(BESTROM_DATE_YEAR)$(BESTROM_DATE_MONTH)$(BESTROM_DATE_DAY)-$(BESTROM_DATE_HOUR)$(BESTROM_DATE_MINUTE)
 
 BESTROM_DEVICE_SHORT := $(subst bestrom_,,$(TARGET_PRODUCT))
