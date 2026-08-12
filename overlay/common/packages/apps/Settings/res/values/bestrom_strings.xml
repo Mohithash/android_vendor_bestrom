@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    BestROM Settings About string defaults (UI only).
+    Resource ids voltage_version* / voltage_maintainer* preserved for Voltage Settings controllers.
+    Do not put BestROM/Theettam tokens into build.prop / fingerprint / uname.
+    flash_02: human-facing kernel label only — uname / LOCALVERSION / POCO FP stay stock.
+-->
 <resources>
+    <!-- Settings → About → custom ROM version title + default summary -->
     <string name="voltage_version">BestROM version</string>
     <string name="voltage_version_default" translatable="false">1.0</string>
+
+    <!-- Build status / maintainer line -->
     <string name="voltage_maintainer_title">Build status</string>
     <string name="voltage_maintainer">BestROM</string>
+
+    <!--
+        Canonical human-facing kernel identity (Settings About / firmware version row).
+        Prefer bestrom_kernel_display when KernelVersionPreferenceController is wired
+        (VPS Settings tree). kernel_version_default kept for overlay/docs packaging.
+        Detector-facing uname / LOCALVERSION stay stock GKI-shaped (SUSFS spoof).
+    -->
+    <string name="bestrom_kernel_display" translatable="false">Theettam 6.1.175 · SukiSU Ultra</string>
+    <string name="kernel_version_default" translatable="false">Theettam 6.1.175 · SukiSU Ultra</string>
 </resources>
