@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    BestROM Updater overlay (flash_08).
+    PRODUCT_PACKAGE_OVERLAYS includes vendor/bestrom/overlay/common.
+    Points client at Mohithash/bestrom_ota catalog; download dir is product-owned.
+-->
+<resources>
+    <string name="updater_server_url" translatable="false">https://raw.githubusercontent.com/Mohithash/bestrom_ota/16/{device}.json</string>
+    <string name="download_path" translatable="false">/data/bestrom_updates/</string>
+</resources>
